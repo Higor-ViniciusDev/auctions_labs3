@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	"log"
 
 	"github.com/Higor-ViniciusDev/auction_labs3/configuration/database/mongodb"
+	"github.com/Higor-ViniciusDev/auction_labs3/configuration/logger"
 	"github.com/Higor-ViniciusDev/auction_labs3/internal/infra/api/web/controller/auction_controller"
 	"github.com/Higor-ViniciusDev/auction_labs3/internal/infra/api/web/controller/bid_controller"
 	"github.com/Higor-ViniciusDev/auction_labs3/internal/infra/api/web/controller/user_controller"
@@ -20,16 +20,17 @@ import (
 )
 
 func main() {
+	defer logger.GetLogger().Sync()
 	ctx := context.Background()
 
 	if err := godotenv.Load("cmd/auction/.env"); err != nil {
-		log.Fatal("Erro ao carregar variaveis de ambiente")
+		logger.Error("Erro ao carregar variaveis de ambiente", err)
 		return
 	}
 
 	db, err := mongodb.NewConnectionDataBaseMongoDB(ctx)
 	if err != nil {
-		log.Fatal(err.Error())
+		logger.Error(err.Error(), err)
 		return
 	}
 	router := gin.Default()
@@ -44,7 +45,7 @@ func main() {
 	router.POST("/bid", bidController.CreateBid)
 	router.GET("/bid/:auctionId", bidController.FindBidsByAuctionID)
 
-	log.Println("Server iniciando na porta 8080")
+	logger.Info("Server iniciando na porta 8080")
 	router.Run(":8080")
 }
 

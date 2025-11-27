@@ -11,8 +11,10 @@ var (
 
 func init() {
 	loadconfig := zap.Config{
-		Level:    zap.NewAtomicLevelAt(zap.InfoLevel),
-		Encoding: "json",
+		Level:            zap.NewAtomicLevelAt(zap.InfoLevel),
+		Encoding:         "json",
+		OutputPaths:      []string{"stdout", "tmp/logs/app.log"},
+		ErrorOutputPaths: []string{"stderr", "tmp/logs/error.log"},
 		EncoderConfig: zapcore.EncoderConfig{
 			MessageKey:   "message",
 			LevelKey:     "level",
@@ -23,16 +25,24 @@ func init() {
 		},
 	}
 
-	log, _ = loadconfig.Build()
+	logNovo, err := loadconfig.Build()
+
+	if err != nil {
+		panic("Error ao iniciar o logger")
+	}
+
+	log = logNovo
 }
 
 func Info(message string, tags ...zap.Field) {
 	log.Info(message, tags...)
-	log.Sync()
 }
 
 func Error(message string, err error, tags ...zap.Field) {
 	tags = append(tags, zap.NamedError("error", err))
 	log.Error(message, tags...)
-	log.Sync()
+}
+
+func GetLogger() *zap.Logger {
+	return log
 }
