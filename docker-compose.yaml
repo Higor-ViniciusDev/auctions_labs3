@@ -1,0 +1,19 @@
+services:
+
+  goapp:
+    container_name: goapp
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo
+    container_name: mongoDB
+    restart: always
+    ports:
+      - "27017:27017"
+
+networks:
+  goapp:
+    driver: bridge
