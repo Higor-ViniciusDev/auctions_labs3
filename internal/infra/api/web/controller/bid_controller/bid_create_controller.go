@@ -23,7 +23,7 @@ func NewBidController(BidUsecase bid_usecase.BidUseCaseInterface) *BidController
 func (bc *BidController) CreateBid(c *gin.Context) {
 	var bidInput bid_usecase.BidInputDTO
 
-	if err := c.ShouldBindJSON(bidInput); err != nil {
+	if err := c.ShouldBindJSON(&bidInput); err != nil {
 		restErro := validation.ValidateErr(err)
 
 		c.JSON(restErro.Code, restErro.Message)

@@ -83,7 +83,7 @@ func (au *AuctionUsecase) CreateAuction(ctx context.Context, auction *AuctionInp
 		timer := time.NewTimer(maxSizeInterval)
 
 		<-timer.C
-		err := au.AuctionRepostiry.UpdateStatus(ctx, auction, auction_entity.Completed)
+		err := au.AuctionRepostiry.UpdateStatus(context.Background(), auction, auction_entity.Completed)
 		if err != nil {
 			logger.Error("error trying to update status auction", err)
 		}
